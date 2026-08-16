@@ -1,0 +1,30 @@
+# PowerShell
+*.ps1xml
+*.pssc
+
+# Secrets / credentials
+*.secret
+*.key
+*.pem
+*.pfx
+secrets/
+.env
+
+# Output / temp
+output/
+tmp/
+*.log
+*.tmp
+
+# Editor
+.vscode/settings.json
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Pester results
+testResults*.xml
+coverage*.xml
