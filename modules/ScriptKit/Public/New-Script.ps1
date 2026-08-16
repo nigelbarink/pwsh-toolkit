@@ -53,7 +53,7 @@ function New-Script {
         Module   = 'advanced-module.ps1'
     }
 
-    $templateFile = Join-Path $PSScriptRoot "../../../../templates/$($templateMap[$Template])"
+    $templateFile = Join-Path $PSScriptRoot "../../../templates/$($templateMap[$Template])"
     $templateFile = [System.IO.Path]::GetFullPath($templateFile)
 
     if (-not (Test-Path $templateFile)) {
