@@ -165,7 +165,7 @@ function ConvertTo-StandaloneScript {
             }
 
             $parameterAst = [System.Management.Automation.Language.CommandParameterAst]$elements[$index]
-            if ($parameterAst.ParameterName -notin @('Name', 'ModuleInfo')) {
+            if ($parameterAst.ParameterName -ne 'Name') {
                 continue
             }
 
