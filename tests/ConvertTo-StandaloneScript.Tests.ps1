@@ -34,4 +34,30 @@ Get-Greeting
         $executionResult = & $outputPath
         $executionResult | Should -Be 'hello'
     }
+
+    It 'detects Import-Module -Name with a separate argument token' {
+        $tempRoot = Join-Path -Path $TestDrive -ChildPath 'fixture-named'
+        $null = New-Item -Path $tempRoot -ItemType Directory -Force
+
+        $modulePath = Join-Path -Path $tempRoot -ChildPath 'NamedModule.psm1'
+        @'
+function Invoke-NamedModule {
+    'named'
+}
+
+Export-ModuleMember -Function Invoke-NamedModule
+'@ | Set-Content -LiteralPath $modulePath
+
+        $scriptPath = Join-Path -Path $tempRoot -ChildPath 'input.ps1'
+        @"
+Import-Module -Name '$modulePath'
+Invoke-NamedModule
+"@ | Set-Content -LiteralPath $scriptPath
+
+        $outputPath = Join-Path -Path $tempRoot -ChildPath 'output.ps1'
+        ConvertTo-StandaloneScript -Path $scriptPath -OutputPath $outputPath | Out-Null
+
+        $executionResult = & $outputPath
+        $executionResult | Should -Be 'named'
+    }
 }

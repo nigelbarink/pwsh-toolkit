@@ -69,7 +69,6 @@ function Remove-ExportModuleMemberStatements {
         [string]$ModuleContent
     )
 
-    $null = $null
     $parseErrors = $null
     $moduleAst = [System.Management.Automation.Language.Parser]::ParseInput($ModuleContent, [ref]$null, [ref]$parseErrors)
 
@@ -158,10 +157,23 @@ function ConvertTo-StandaloneScript {
             $moduleReferences.Add($elements[1].Value)
         }
 
-        foreach ($parameterAst in $command.CommandElements | Where-Object { $_ -is [System.Management.Automation.Language.CommandParameterAst] }) {
-            if ($parameterAst.ParameterName -in @('Name', 'ModuleInfo') -and
-                $parameterAst.Argument -is [System.Management.Automation.Language.StringConstantExpressionAst]) {
+        for ($index = 0; $index -lt $elements.Count; $index++) {
+            if ($elements[$index] -isnot [System.Management.Automation.Language.CommandParameterAst]) {
+                continue
+            }
+
+            $parameterAst = [System.Management.Automation.Language.CommandParameterAst]$elements[$index]
+            if ($parameterAst.ParameterName -notin @('Name', 'ModuleInfo')) {
+                continue
+            }
+
+            if ($parameterAst.Argument -is [System.Management.Automation.Language.StringConstantExpressionAst]) {
                 $moduleReferences.Add($parameterAst.Argument.Value)
+                continue
+            }
+
+            if ($index + 1 -lt $elements.Count -and $elements[$index + 1] -is [System.Management.Automation.Language.StringConstantExpressionAst]) {
+                $moduleReferences.Add($elements[$index + 1].Value)
             }
         }
     }
