@@ -10,6 +10,8 @@ jobs:
   lint:
     name: PSScriptAnalyzer
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
 
@@ -33,6 +35,8 @@ jobs:
   test:
     name: Pester Tests
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     steps:
       - uses: actions/checkout@v4
 

@@ -68,7 +68,10 @@ Describe 'Invoke-Pipeline' {
         $result = Invoke-Pipeline -InputObject @(1, 2, 3) -Steps @(
             { $_ }
         )
-        $result | Should -Be @(1, 2, 3)
+        $result | Should -HaveCount 3
+        $result[0] | Should -Be 1
+        $result[1] | Should -Be 2
+        $result[2] | Should -Be 3
     }
 
     It 'applies multiple steps in order' {
@@ -76,14 +79,19 @@ Describe 'Invoke-Pipeline' {
             { $_ | Where-Object { $_ -gt 2 } }
             { $_ | ForEach-Object { $_ * 10 } }
         )
-        $result | Should -Be @(30, 40, 50)
+        $result | Should -HaveCount 3
+        $result[0] | Should -Be 30
+        $result[1] | Should -Be 40
+        $result[2] | Should -Be 50
     }
 
     It 'works with string input and transformation' {
         $result = Invoke-Pipeline -InputObject @('hello', 'world') -Steps @(
             { $_ | ForEach-Object { $_.ToUpper() } }
         )
-        $result | Should -Be @('HELLO', 'WORLD')
+        $result | Should -HaveCount 2
+        $result[0] | Should -Be 'HELLO'
+        $result[1] | Should -Be 'WORLD'
     }
 }
 

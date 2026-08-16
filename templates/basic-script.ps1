@@ -9,8 +9,6 @@
     Path to the input file or directory.
 .PARAMETER OutputPath
     Where to write results. Defaults to the current directory.
-.PARAMETER Verbose
-    Show detailed progress output.
 .EXAMPLE
     .\basic-script.ps1 -InputPath ./data.csv
 .EXAMPLE

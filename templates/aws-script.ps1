@@ -29,9 +29,9 @@
 #>
 [CmdletBinding(SupportsShouldProcess)]
 param(
-    [string] $Profile = ($env:AWS_PROFILE -or 'default'),
+    [string] $Profile = $(if ($env:AWS_PROFILE)          { $env:AWS_PROFILE }          else { 'default' }),
 
-    [string] $Region  = ($env:AWS_DEFAULT_REGION -or 'us-east-1'),
+    [string] $Region  = $(if ($env:AWS_DEFAULT_REGION)   { $env:AWS_DEFAULT_REGION }   else { 'us-east-1' }),
 
     [switch] $DryRun
 )
