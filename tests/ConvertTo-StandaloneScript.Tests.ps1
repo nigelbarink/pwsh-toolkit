@@ -60,4 +60,24 @@ Invoke-NamedModule
         $executionResult = & $outputPath
         $executionResult | Should -Be 'named'
     }
+
+    It 'preserves leading indentation on the first remaining script line' {
+        $tempRoot = Join-Path -Path $TestDrive -ChildPath 'fixture-indent'
+        $null = New-Item -Path $tempRoot -ItemType Directory -Force
+
+        $modulePath = Join-Path -Path $tempRoot -ChildPath 'IndentModule.psm1'
+        "function Invoke-Indent { 'indent' }`nExport-ModuleMember -Function Invoke-Indent" | Set-Content -LiteralPath $modulePath
+
+        $scriptPath = Join-Path -Path $tempRoot -ChildPath 'input.ps1'
+        @"
+Import-Module '$modulePath'
+    Invoke-Indent
+"@ | Set-Content -LiteralPath $scriptPath
+
+        $outputPath = Join-Path -Path $tempRoot -ChildPath 'output.ps1'
+        ConvertTo-StandaloneScript -Path $scriptPath -OutputPath $outputPath | Out-Null
+
+        $outputContent = Get-Content -LiteralPath $outputPath -Raw
+        $outputContent | Should -Match "(?m)^    Invoke-Indent$"
+    }
 }

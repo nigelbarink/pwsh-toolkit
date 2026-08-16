@@ -153,7 +153,9 @@ function ConvertTo-StandaloneScript {
 
     foreach ($command in $importCommands) {
         $elements = $command.CommandElements
-        if ($elements.Count -ge 2 -and $elements[1] -is [System.Management.Automation.Language.StringConstantExpressionAst]) {
+        if ($elements.Count -ge 2 -and
+            $elements[1] -isnot [System.Management.Automation.Language.CommandParameterAst] -and
+            $elements[1] -is [System.Management.Automation.Language.StringConstantExpressionAst]) {
             $moduleReferences.Add($elements[1].Value)
         }
 
@@ -223,10 +225,13 @@ function ConvertTo-StandaloneScript {
         "# Source script: $resolvedInputPath"
     ) -join [Environment]::NewLine
 
+    $scriptBody = $scriptBodyLines -join [Environment]::NewLine
+    $scriptBody = [System.Text.RegularExpressions.Regex]::Replace($scriptBody, '^(?:[ \t]*\r?\n)+', '')
+
     $finalContent = @(
         $header,
         ($inlinedModules -join ([Environment]::NewLine + [Environment]::NewLine)),
-        ($scriptBodyLines -join [Environment]::NewLine).TrimStart()
+        $scriptBody
     ) -join ([Environment]::NewLine + [Environment]::NewLine)
 
     Set-Content -LiteralPath $resolvedOutputPath -Value $finalContent
