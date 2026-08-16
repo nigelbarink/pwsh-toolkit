@@ -49,6 +49,12 @@
 
         # Our Write-* functions intentionally use Write-Host for styled console output
         'PSAvoidUsingWriteHost'
+
+        # Allow $Profile as a parameter name in AWS examples (natural AWS CLI naming)
+        'PSAvoidAssignmentToAutomaticVariable'
+
+        # Allow Invoke-Aws as a concise helper name in examples
+        'PSUseSingularNouns'
     )
 
 }

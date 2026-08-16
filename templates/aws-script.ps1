@@ -11,7 +11,7 @@
         - AWS CLI installed and on $env:PATH
         - A valid named profile (or default credentials) configured
 
-.PARAMETER AwsProfile
+.PARAMETER Profile
     AWS named profile (maps to --profile).  Defaults to $env:AWS_PROFILE or
     "default".
 .PARAMETER Region
@@ -20,7 +20,7 @@
 .PARAMETER DryRun
     When set, shows what would happen without making any changes.
 .EXAMPLE
-    .\aws-script.ps1 -AwsProfile dev -Region eu-west-1
+    .\aws-script.ps1 -Profile dev -Region eu-west-1
 .EXAMPLE
     .\aws-script.ps1 -DryRun
 .NOTES
@@ -29,9 +29,9 @@
 #>
 [CmdletBinding(SupportsShouldProcess)]
 param(
-    [string] $AwsProfile = $(if ($env:AWS_PROFILE)          { $env:AWS_PROFILE }          else { 'default' }),
+    [string] $Profile = $(if ($env:AWS_PROFILE)          { $env:AWS_PROFILE }          else { 'default' }),
 
-    [string] $Region     = $(if ($env:AWS_DEFAULT_REGION)   { $env:AWS_DEFAULT_REGION }   else { 'us-east-1' }),
+    [string] $Region  = $(if ($env:AWS_DEFAULT_REGION)   { $env:AWS_DEFAULT_REGION }   else { 'us-east-1' }),
 
     [switch] $DryRun
 )
@@ -50,7 +50,7 @@ if (Test-Path $moduleRoot) {
 # ---------------------------------------------------------------------------
 # Helper: run aws CLI and return parsed JSON
 # ---------------------------------------------------------------------------
-function Invoke-AwsCli {
+function Invoke-Aws {
     <#
     .SYNOPSIS
         Runs an AWS CLI command and returns the parsed JSON result.
@@ -61,7 +61,7 @@ function Invoke-AwsCli {
         [string[]] $Arguments
     )
 
-    $allArgs = @('--profile', $AwsProfile, '--region', $Region, '--output', 'json') + $Arguments
+    $allArgs = @('--profile', $Profile, '--region', $Region, '--output', 'json') + $Arguments
 
     Write-Verbose "aws $($allArgs -join ' ')"
     $json = aws @allArgs 2>&1
@@ -80,7 +80,7 @@ if (-not (Get-Command aws -ErrorAction SilentlyContinue)) {
     exit 1
 }
 
-Write-Info "Profile : $AwsProfile"
+Write-Info "Profile : $Profile"
 Write-Info "Region  : $Region"
 
 if ($DryRun) {
@@ -90,7 +90,7 @@ if ($DryRun) {
 # Verify the profile/credentials are valid
 Write-Status 'Validating credentials...'
 try {
-    $identity = Invoke-AwsCli -Arguments @('sts', 'get-caller-identity')
+    $identity = Invoke-Aws -Arguments @('sts', 'get-caller-identity')
     Write-Success "Authenticated as: $($identity.Arn)"
 }
 catch {
@@ -106,7 +106,7 @@ Write-Status 'Running main logic...'
 try {
     if ($DryRun -or $PSCmdlet.ShouldProcess('AWS resources', 'Query')) {
         # Example: list S3 buckets
-        $buckets = Invoke-AwsCli -Arguments @('s3api', 'list-buckets')
+        $buckets = Invoke-Aws -Arguments @('s3api', 'list-buckets')
         $buckets.Buckets | ForEach-Object {
             Write-Info "  Bucket: $($_.Name)"
         }
