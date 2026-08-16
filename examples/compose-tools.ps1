@@ -58,7 +58,7 @@ $formatReport = {
 # ---------------------------------------------------------------------------
 # Compose with Invoke-Pipeline (explicit, readable chain)
 # ---------------------------------------------------------------------------
-Write-Status "Running pipeline composition example..."
+Write-Status 'Running pipeline composition example...'
 
 $report = Invoke-Pipeline -InputObject $rawLines -Steps @(
     $parseLines
@@ -74,7 +74,7 @@ $report | Format-Table -AutoSize
 # ---------------------------------------------------------------------------
 # Alternative: native PowerShell pipeline (preferred for production)
 # ---------------------------------------------------------------------------
-Write-Info "Same result via native pipeline:"
+Write-Info 'Same result via native pipeline:'
 
 $rawLines |
     ForEach-Object -Process $parseLines |

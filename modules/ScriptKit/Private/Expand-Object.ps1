@@ -7,7 +7,7 @@ function Expand-Object {
     param(
         [object]     $InputObject,
         [string]     $Prefix,
-        [hashtable]  $Target,
+        [System.Collections.IDictionary]  $Target,
         [string]     $Separator,
         [int]        $Depth,
         [int]        $MaxDepth

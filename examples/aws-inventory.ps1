@@ -35,6 +35,10 @@ if (Test-Path $moduleRoot) { Import-Module $moduleRoot -Force }
 # AWS CLI wrapper
 # ---------------------------------------------------------------------------
 function Invoke-Aws {
+    <#
+    .SYNOPSIS
+        Runs an AWS CLI command and returns the parsed JSON result.
+    #>
     [CmdletBinding()]
     param([string[]] $Arguments)
 
@@ -50,13 +54,13 @@ function Invoke-Aws {
 # Preflight
 # ---------------------------------------------------------------------------
 if (-not (Get-Command aws -ErrorAction SilentlyContinue)) {
-    Write-ErrorMsg "AWS CLI not found."
+    Write-ErrorMsg 'AWS CLI not found.'
     exit 1
 }
 
 Write-Info "Profile : $Profile  |  Region : $Region"
 
-Write-Status "Validating credentials..."
+Write-Status 'Validating credentials...'
 try {
     $identity = Invoke-Aws -Arguments @('sts', 'get-caller-identity')
     Write-Success "Authenticated: $($identity.Arn)"
@@ -69,7 +73,7 @@ catch {
 # ---------------------------------------------------------------------------
 # Inventory: EC2
 # ---------------------------------------------------------------------------
-Write-Status "Fetching running EC2 instances..."
+Write-Status 'Fetching running EC2 instances...'
 
 try {
     $result = Invoke-Aws -Arguments @(

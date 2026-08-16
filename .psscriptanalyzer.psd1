@@ -44,13 +44,17 @@
     }
 
     ExcludeRules = @(
-        # Our Write-* functions intentionally use Write-Host – suppress there
-        # via suppression comments instead of a global exclusion
+        # UTF-8 BOM is not required; files without BOM are valid UTF-8
+        'PSUseBOMForUnicodeEncodedFile'
+
+        # Our Write-* functions intentionally use Write-Host for styled console output
+        'PSAvoidUsingWriteHost'
+
+        # Allow $Profile as a parameter name in AWS examples (natural AWS CLI naming)
+        'PSAvoidAssignmentToAutomaticVariable'
+
+        # Allow Invoke-Aws as a concise helper name in examples
+        'PSUseSingularNouns'
     )
 
-    # Exclude generated or third-party paths
-    ExcludePath  = @(
-        '.git'
-        'node_modules'
-    )
 }

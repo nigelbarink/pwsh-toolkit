@@ -51,6 +51,10 @@ if (Test-Path $moduleRoot) {
 # Helper: run aws CLI and return parsed JSON
 # ---------------------------------------------------------------------------
 function Invoke-Aws {
+    <#
+    .SYNOPSIS
+        Runs an AWS CLI command and returns the parsed JSON result.
+    #>
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)]
@@ -70,9 +74,9 @@ function Invoke-Aws {
 # ---------------------------------------------------------------------------
 # Preflight checks
 # ---------------------------------------------------------------------------
-Write-Status "Checking AWS CLI availability..."
+Write-Status 'Checking AWS CLI availability...'
 if (-not (Get-Command aws -ErrorAction SilentlyContinue)) {
-    Write-ErrorMsg "AWS CLI not found.  Install it from https://aws.amazon.com/cli/"
+    Write-ErrorMsg 'AWS CLI not found.  Install it from https://aws.amazon.com/cli/'
     exit 1
 }
 
@@ -80,11 +84,11 @@ Write-Info "Profile : $Profile"
 Write-Info "Region  : $Region"
 
 if ($DryRun) {
-    Write-Warn "DRY-RUN mode – no changes will be made."
+    Write-Warn 'DRY-RUN mode – no changes will be made.'
 }
 
 # Verify the profile/credentials are valid
-Write-Status "Validating credentials..."
+Write-Status 'Validating credentials...'
 try {
     $identity = Invoke-Aws -Arguments @('sts', 'get-caller-identity')
     Write-Success "Authenticated as: $($identity.Arn)"
@@ -97,7 +101,7 @@ catch {
 # ---------------------------------------------------------------------------
 # Main logic – replace with your real AWS operations
 # ---------------------------------------------------------------------------
-Write-Status "Running main logic..."
+Write-Status 'Running main logic...'
 
 try {
     if ($DryRun -or $PSCmdlet.ShouldProcess('AWS resources', 'Query')) {
@@ -108,7 +112,7 @@ try {
         }
     }
 
-    Write-Success "Done."
+    Write-Success 'Done.'
 }
 catch {
     Write-ErrorMsg "Error: $_"

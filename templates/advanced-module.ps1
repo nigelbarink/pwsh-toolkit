@@ -61,7 +61,12 @@ function Get-MyThing {
 # Example private helper – copy to Private/<FunctionName>.ps1
 # ---------------------------------------------------------------------------
 function Invoke-InternalHelper {
+    <#
+    .SYNOPSIS
+        Internal helper function template – copy to Private/<FunctionName>.ps1.
+    #>
     [CmdletBinding()]
+    [OutputType([string])]
     param([string] $Name)
 
     # Simulate work
