@@ -44,13 +44,11 @@
     }
 
     ExcludeRules = @(
-        # Our Write-* functions intentionally use Write-Host – suppress there
-        # via suppression comments instead of a global exclusion
+        # UTF-8 BOM is not required; files without BOM are valid UTF-8
+        'PSUseBOMForUnicodeEncodedFile'
+
+        # Our Write-* functions intentionally use Write-Host for styled console output
+        'PSAvoidUsingWriteHost'
     )
 
-    # Exclude generated or third-party paths
-    ExcludePath  = @(
-        '.git'
-        'node_modules'
-    )
 }

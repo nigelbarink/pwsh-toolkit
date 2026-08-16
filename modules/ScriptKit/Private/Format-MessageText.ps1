@@ -4,6 +4,7 @@ function Format-MessageText {
         Internal helper – formats a log/display string with optional timestamp.
     #>
     [CmdletBinding()]
+    [OutputType([string])]
     param(
         [string] $Prefix,
         [string] $Message,

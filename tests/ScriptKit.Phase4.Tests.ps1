@@ -90,7 +90,7 @@ Describe 'New-Script' {
     }
 
     It 'creates destination directory if it does not exist' {
-        $nested = Join-Path $tmpDir 'sub' 'dir'
+        $nested = Join-Path -Path $tmpDir -ChildPath 'sub' -AdditionalChildPath 'dir'
         $file = New-Script -Name 'nested' -Destination $nested
         $file.Exists | Should -BeTrue
     }

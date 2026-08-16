@@ -48,17 +48,27 @@ try {
     # TODO: replace with your real logic
     $items = Get-Item -Path $InputPath
 
+    # Ensure the output directory exists
+    if (-not (Test-Path $OutputPath)) {
+        New-Item -ItemType Directory -Path $OutputPath | Out-Null
+    }
+
     Write-Info "Processing: $($items.Name)"
 
     # Example: do something with each item
     foreach ($item in $items) {
         if ($PSCmdlet.ShouldProcess($item.FullName, 'Process')) {
             Write-Status "  -> $($item.Name)"
-            # ... your logic here ...
+            $dest = Join-Path $OutputPath $item.Name
+            if ((Test-Path $dest) -and -not $Force) {
+                Write-Warn "Skipping '$dest' – already exists. Use -Force to overwrite."
+                continue
+            }
+            # TODO: write your output to $dest here
         }
     }
 
-    Write-Success "Completed successfully."
+    Write-Success 'Completed successfully.'
 }
 catch {
     Write-ErrorMsg "Fatal error: $_"

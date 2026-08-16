@@ -7,22 +7,22 @@
     credential checking, structured output, and dry-run support.
 
     Usage:
-        .\aws-inventory.ps1 -Profile dev -Region eu-west-1
+        .\aws-inventory.ps1 -AwsProfile dev -Region eu-west-1
         .\aws-inventory.ps1 | Export-Csv inventory.csv -NoTypeInformation
 
-.PARAMETER Profile
+.PARAMETER AwsProfile
     AWS named profile.  Defaults to $env:AWS_PROFILE or "default".
 .PARAMETER Region
     AWS region.  Defaults to $env:AWS_DEFAULT_REGION or "us-east-1".
 .EXAMPLE
-    .\aws-inventory.ps1 -Profile prod -Region us-east-1
+    .\aws-inventory.ps1 -AwsProfile prod -Region us-east-1
 .EXAMPLE
     .\aws-inventory.ps1 -Verbose | Format-Table -AutoSize
 #>
 [CmdletBinding()]
 param(
-    [string] $Profile = $(if ($env:AWS_PROFILE)        { $env:AWS_PROFILE }        else { 'default' }),
-    [string] $Region  = $(if ($env:AWS_DEFAULT_REGION) { $env:AWS_DEFAULT_REGION } else { 'us-east-1' })
+    [string] $AwsProfile = $(if ($env:AWS_PROFILE)        { $env:AWS_PROFILE }        else { 'default' }),
+    [string] $Region     = $(if ($env:AWS_DEFAULT_REGION) { $env:AWS_DEFAULT_REGION } else { 'us-east-1' })
 )
 
 Set-StrictMode -Version Latest
@@ -34,11 +34,15 @@ if (Test-Path $moduleRoot) { Import-Module $moduleRoot -Force }
 # ---------------------------------------------------------------------------
 # AWS CLI wrapper
 # ---------------------------------------------------------------------------
-function Invoke-Aws {
+function Invoke-AwsCli {
+    <#
+    .SYNOPSIS
+        Runs an AWS CLI command and returns the parsed JSON result.
+    #>
     [CmdletBinding()]
     param([string[]] $Arguments)
 
-    $allArgs = @('--profile', $Profile, '--region', $Region, '--output', 'json') + $Arguments
+    $allArgs = @('--profile', $AwsProfile, '--region', $Region, '--output', 'json') + $Arguments
     Write-Verbose "aws $($allArgs -join ' ')"
 
     $json = aws @allArgs 2>&1
@@ -50,15 +54,15 @@ function Invoke-Aws {
 # Preflight
 # ---------------------------------------------------------------------------
 if (-not (Get-Command aws -ErrorAction SilentlyContinue)) {
-    Write-ErrorMsg "AWS CLI not found."
+    Write-ErrorMsg 'AWS CLI not found.'
     exit 1
 }
 
-Write-Info "Profile : $Profile  |  Region : $Region"
+Write-Info "Profile : $AwsProfile  |  Region : $Region"
 
-Write-Status "Validating credentials..."
+Write-Status 'Validating credentials...'
 try {
-    $identity = Invoke-Aws -Arguments @('sts', 'get-caller-identity')
+    $identity = Invoke-AwsCli -Arguments @('sts', 'get-caller-identity')
     Write-Success "Authenticated: $($identity.Arn)"
 }
 catch {
@@ -69,10 +73,10 @@ catch {
 # ---------------------------------------------------------------------------
 # Inventory: EC2
 # ---------------------------------------------------------------------------
-Write-Status "Fetching running EC2 instances..."
+Write-Status 'Fetching running EC2 instances...'
 
 try {
-    $result = Invoke-Aws -Arguments @(
+    $result = Invoke-AwsCli -Arguments @(
         'ec2', 'describe-instances',
         '--filters', 'Name=instance-state-name,Values=running'
     )
