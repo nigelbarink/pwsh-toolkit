@@ -9,6 +9,6 @@
     PowerShellVersion = '7.0'
     FunctionsToExport = @('ConvertTo-StandaloneScript')
     CmdletsToExport = @()
-    VariablesToExport = '*'
+    VariablesToExport = @()
     AliasesToExport = @()
 }
