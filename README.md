@@ -16,19 +16,34 @@ A reusable, opinionated starter kit for writing high-quality PowerShell scripts.
 # Import the shared ScriptKit module
 Import-Module ./modules/ScriptKit/ScriptKit.psd1
 
-# Use the messaging functions
+# Messaging functions
 Write-Status  "Doing something..."
 Write-Success "Done!"
 Write-Warn    "Check your inputs."
 Write-ErrorMsg "Something went wrong."
 Write-Info    "Extra context here."
+Write-Header  "Phase 1: Discovery"   # prominent section banner
 ```
 
-Copy a template to start a new script:
+Create a new script from a template in one command:
 
 ```powershell
-Copy-Item ./templates/basic-script.ps1 ./scripts/my-new-script.ps1
+# Basic script (default)
+New-Script -Name "my-tool.ps1" -Destination ./scripts
+
+# AWS-aware script
+New-Script -Name "deploy.ps1" -Template Aws -Destination ./scripts -Open
 ```
+
+Flatten nested objects for CSV export:
+
+```powershell
+$aws_response | ConvertTo-FlatObject | Export-Csv report.csv -NoTypeInformation
+```
+
+## VS Code
+
+Open `pwsh-toolkit.code-workspace` for recommended settings and the PowerShell extension.
 
 ## Repository Structure
 

@@ -11,7 +11,10 @@
         'Write-Warn'
         'Write-ErrorMsg'
         'Write-Info'
+        'Write-Header'
         'Invoke-Pipeline'
+        'New-Script'
+        'ConvertTo-FlatObject'
     )
     PrivateData       = @{
         PSData = @{
